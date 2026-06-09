@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buyer Persona Dashboard — Win The House You Love</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  /* ===== Webinar-builder design language (single source of truth) ===== */
+  :root{
+    --paper:#f0efed; --paper-2:#e3e1dd; --paper-3:#cfcdc8;
+    --ink:#01413e; --ink-soft:#4e6e6c;
+    --accent:#447247; --accent-deep:#2f5331; --accent-soft:#dfe9df;
+    --plum:#7a306c; --plum-soft:#ecdfe8;
+    --hot:#cc451c; --hot-soft:#f5e3da;
+    --line:#d4d2cd; --card:#ffffff;
+    --body:'Figtree','Segoe UI',system-ui,Arial,sans-serif;
+    --radius:22px;
+    --shadow:0 24px 70px -34px rgba(1,65,62,.40);
+    --shadow-soft:0 12px 36px -26px rgba(1,65,62,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px 90px}
+  h1,h2,h3{font-weight:600;letter-spacing:-.022em;line-height:1.04;color:var(--ink)}
+  em{font-style:normal;color:var(--accent);font-weight:800}
+
+  /* ===== HERO (cyprus divider motif) ===== */
+  .hero{
+    background:
+      radial-gradient(ellipse 90% 70% at 10% 8%, rgba(255,255,255,.06) 0%, transparent 60%),
+      linear-gradient(155deg, var(--ink) 0%, #023a37 100%);
+    color:var(--paper);border-radius:0 0 var(--radius) var(--radius);
+    margin:0 -28px 0;padding:64px 56px 70px;
+  }
+  .hero-inner{max-width:1124px;margin:0 auto}
+  .eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:12.5px;font-weight:800;color:#9ec6a6}
+  .hero h1{font-size:clamp(36px,5.2vw,62px);font-weight:600;letter-spacing:-.025em;margin:14px 0 0;max-width:18ch;color:var(--paper)}
+  .hero h1 em{color:#86c08e;text-decoration:underline;text-decoration-color:rgba(134,192,142,.4);text-underline-offset:.1em}
+  .hero .rule{width:96px;height:4px;background:var(--accent);border-radius:2px;margin:30px 0 26px}
+  .hero .sub{font-size:20px;font-weight:400;color:var(--paper);opacity:.82;max-width:62ch;line-height:1.34}
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+  .pill{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:60px;padding:8px 16px;font-size:13px;color:var(--paper);opacity:.9;font-weight:500}
+  .pill b{font-weight:800;color:#fff;opacity:1}
+
+  /* ===== SECTION HEADS ===== */
+  section{margin-top:62px}
+  .sec-head{margin-bottom:26px}
+  .sec-head .kicker{display:inline-block;width:46px;height:4px;background:var(--accent);border-radius:2px;margin-bottom:16px}
+  .sec-head h2{font-size:30px;font-weight:600;letter-spacing:-.018em}
+  .sec-head p{font-size:15px;color:var(--ink-soft);margin-top:6px;max-width:70ch}
+
+  /* ===== KPI (stat-dash motif) ===== */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:18px}
+  .kpi{background:var(--card);border-radius:18px;padding:26px 24px;box-shadow:var(--shadow-soft)}
+  .kpi .v{font-weight:600;font-size:46px;letter-spacing:-.03em;line-height:.9;color:var(--accent)}
+  .kpi:nth-child(2) .v{color:var(--plum)} .kpi:nth-child(3) .v{color:var(--hot)}
+  .kpi:nth-child(4) .v{color:var(--ink)} .kpi:nth-child(5) .v{color:var(--accent-deep)}
+  .kpi:nth-child(6) .v{color:var(--plum)}
+  .kpi .v .unit{font-size:.46em;font-weight:500;color:var(--ink-soft);letter-spacing:0}
+  .kpi .l{font-size:14px;font-weight:700;color:var(--ink);margin-top:14px;line-height:1.25}
+  .kpi .d{font-size:12.5px;color:var(--ink-soft);font-weight:500;margin-top:4px}
+
+  /* ===== grids ===== */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  @media(max-width:880px){.grid2,.grid3{grid-template-columns:1fr}}
+
+  /* ===== PERSONAS (gi-numbered + callout motif) ===== */
+  .persona{background:var(--card);border-radius:18px;padding:30px 30px 28px;box-shadow:var(--shadow-soft);position:relative;overflow:hidden;display:flex;flex-direction:column}
+  .persona::before{content:"";position:absolute;top:0;left:0;right:0;height:5px}
+  .persona.p1::before{background:var(--accent)} .persona.p2::before{background:var(--plum)} .persona.p3::before{background:var(--hot)}
+  .persona .idx{font-weight:600;font-size:74px;line-height:.82;letter-spacing:-.04em;color:var(--accent)}
+  .persona.p2 .idx{color:var(--plum)} .persona.p3 .idx{color:var(--hot)}
+  .persona .tag{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-top:12px}
+  .persona.p1 .tag{color:var(--accent-deep)} .persona.p2 .tag{color:var(--plum)} .persona.p3 .tag{color:var(--hot)}
+  .persona h3{font-size:27px;font-weight:600;margin:4px 0 2px;letter-spacing:-.02em}
+  .persona .share{font-size:13px;color:var(--ink-soft);font-weight:500;margin-bottom:16px}
+  .persona dl{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;font-size:14px;margin:6px 0 14px}
+  .persona dt{color:var(--ink-soft);font-weight:500}
+  .persona dd{font-weight:800;text-align:right;color:var(--ink)}
+  .persona .blurb{font-size:14.5px;color:var(--ink);line-height:1.5}
+  .persona .blurb em{font-weight:800}
+  .persona .topics{margin-top:18px;padding-top:16px;border-top:2px dotted var(--paper-3)}
+  .persona .topics b{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:800}
+  .persona .topics ul{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:11px}
+  .persona .topics li{font-size:14px;font-weight:500;color:var(--ink);padding-left:28px;position:relative;line-height:1.34}
+  /* diamond bullet motif */
+  .persona .topics li::before{content:"";position:absolute;left:2px;top:.42em;width:13px;height:13px;border-radius:4px;transform:rotate(45deg)}
+  .persona.p1 .topics li::before{background:var(--accent)} .persona.p2 .topics li::before{background:var(--plum)} .persona.p3 .topics li::before{background:var(--hot)}
+
+  /* ===== CHART CARDS ===== */
+  .card{background:var(--card);border-radius:18px;padding:26px;box-shadow:var(--shadow-soft)}
+  .card h3{font-size:18px;font-weight:600;margin-bottom:4px;letter-spacing:-.012em}
+  .card .cap{font-size:13.5px;color:var(--ink-soft);font-weight:500;margin-bottom:18px}
+  .chart-box{position:relative;height:262px}
+  .chart-box.tall{height:330px}
+
+  /* ===== INSIGHTS (callout motif) ===== */
+  .insight{border-radius:18px;padding:24px 26px;box-shadow:var(--shadow-soft);background:var(--accent-soft)}
+  .insight.c-plum{background:var(--plum-soft)} .insight.c-hot{background:var(--hot-soft)}
+  .insight .kind{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:8px}
+  .insight.c-plum .kind{color:var(--plum)} .insight.c-hot .kind{color:var(--hot)}
+  .insight h4{font-size:18px;font-weight:600;letter-spacing:-.012em;margin-bottom:8px;color:var(--ink)}
+  .insight p{font-size:14.5px;color:var(--ink);line-height:1.5}
+  .insight .num{font-weight:800;color:var(--accent-deep)}
+  .insight.c-plum .num{color:var(--plum)} .insight.c-hot .num{color:var(--hot)}
+  .stack{display:flex;flex-direction:column;gap:18px}
+
+  footer{margin-top:70px;padding-top:26px;border-top:2px dotted var(--paper-3);font-size:13px;color:var(--ink-soft);font-weight:500;line-height:1.5}
+</style>
+</head>
+<body>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Win The House You Love · Audience Intelligence</div>
+      <h1>Who is actually buying — and <em>what to make videos about</em></h1>
+      <div class="rule"></div>
+      <p class="sub">Every borrower here came from the YouTube channel and was referred to a partner loan officer. This is your audience after they stop watching and start buying. The patterns tell you who to make videos <em>for</em>.</p>
+      <div class="meta-row">
+        <span class="pill"><b id="kp-n"></b> funded / active loans</span>
+        <span class="pill"><b id="kp-vol"></b> total volume</span>
+        <span class="pill">Window <b>Dec 2024 – Jun 2026</b></span>
+        <span class="pill"><b>100%</b> WTHYL influencer leads</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <!-- KPIS -->
+    <section>
+      <div class="sec-head"><span class="kicker"></span><h2>The audience at a glance</h2><p>Medians, not averages — a couple of jumbo loans skew the mean.</p></div>
+      <div class="kpis" id="kpis"></div>
+    </section>
+
+    <!-- PERSONAS -->
+    <section>
+      <div class="sec-head"><span class="kicker"></span><h2>Three buyer personas</h2><p>Segmented by loan type — the cleanest proxy for credit profile and life stage in this data. Each comes with ready-to-shoot video angles.</p></div>
+      <div class="grid3" id="personas"></div>
+    </section>
+
+    <!-- CHARTS -->
+    <section>
+      <div class="sec-head"><span class="kicker"></span><h2>The data behind the personas</h2></div>
+      <div class="grid2">
+        <div class="card"><h3>Loan type mix</h3><div class="cap">Conventional leads, but FHA is a full third of your buyers</div><div class="chart-box"><canvas id="cType"></canvas></div></div>
+        <div class="card"><h3>Credit score distribution</h3><div class="cap">A barbell: a strong-credit majority plus a real sub-680 segment</div><div class="chart-box"><canvas id="cCredit"></canvas></div></div>
+        <div class="card"><h3>Down payment at close</h3><div class="cap">Half put down 3% or less — low-down content wins</div><div class="chart-box"><canvas id="cDown"></canvas></div></div>
+        <div class="card"><h3>Annual income</h3><div class="cap">Middle / upper-middle — not wealthy, not broke</div><div class="chart-box"><canvas id="cIncome"></canvas></div></div>
+        <div class="card"><h3>Purchase price</h3><div class="cap">Affordable-market buyers — median ~$312k</div><div class="chart-box"><canvas id="cPrice"></canvas></div></div>
+        <div class="card"><h3>Where they're buying</h3><div class="cap">Affordable South + Midwest lead. TX & NC are #1 and #2</div><div class="chart-box"><canvas id="cState"></canvas></div></div>
+        <div class="card"><h3>Credit vs. price, by loan type</h3><div class="cap">FHA clusters at lower credit; conventional spans the top</div><div class="chart-box tall"><canvas id="cScatter"></canvas></div></div>
+        <div class="card"><h3>Note rate locked</h3><div class="cap">Most closed at 6–7%. Your audience buys despite high rates</div><div class="chart-box tall"><canvas id="cRate"></canvas></div></div>
+      </div>
+    </section>
+
+    <!-- INSIGHTS -->
+    <section>
+      <div class="sec-head"><span class="kicker"></span><h2>What this means for the content calendar</h2><p>The non-obvious takeaways.</p></div>
+      <div class="grid2">
+        <div class="stack">
+          <div class="insight"><div class="kind">Lead with this</div><h4>Low down payment is the core story</h4><p><span class="num" id="i-dp"></span> of buyers put down <em>3% or less</em>, and the median is just <b>3.8%</b>. "You don't need 20% down" isn't a niche — it's the dominant reality of your audience. Lead with 3% conventional, FHA 3.5%, and DPA programs.</p></div>
+          <div class="insight c-plum"><div class="kind">Audience shape</div><h4>You convert solo buyers more than couples</h4><p><span class="num" id="i-solo"></span> of loans had <em>no co-borrower income</em> — single-income buyers doing it alone. Content for the solo first-time buyer ("can I afford it by myself?") speaks to your actual majority.</p></div>
+          <div class="insight"><div class="kind">Reframe</div><h4>FHA buyers earn more than you'd think</h4><p>FHA buyers' median income (<span class="num">$103k</span>) is <em>higher</em> than conventional buyers' (<span class="num">$91k</span>). They choose FHA for <b>credit (median 660)</b>, not income. The story is "good income, bruised credit, here's your path."</p></div>
+        </div>
+        <div class="stack">
+          <div class="insight c-hot"><div class="kind">Timely</div><h4>Rates didn't stop them — make that the hook</h4><p>Median rate locked was <b>~6.9%</b>, with buyers closing up to <em>8.5%</em>. Your audience acts in a high-rate market. "Buy now, refinance later," buydowns, and seller credits are high-intent topics.</p></div>
+          <div class="insight c-plum"><div class="kind">Positioning</div><h4>You're a national, affordable-market channel</h4><p>Buyers span <em>25 states</em>, led by <b>TX & NC</b>, median price <b>$312k</b> — well below coastal prices. Don't make California-priced content; show $250k–$400k homes.</p></div>
+          <div class="insight"><div class="kind">Don't forget</div><h4>A high-credit majority is under-served</h4><p><span class="num" id="i-strong"></span> of buyers have <em>740+ credit</em>. They don't need credit-repair videos — they need "lowest down payment with great credit," PMI removal, and buy-vs-rent math.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Built from <span id="f-n"></span> de-identified loan records, all sourced from Win The House You Love · Dec 2024–Jun 2026. Figures are medians unless noted. Persona splits are by loan type. Styled in the WTHYL / webinar-builder editorial system.
+    </footer>
+  </div>
+
+<script>
+const DATA = [{"state": "IL", "price": 222000, "loan": 215340, "credit": 717, "rate": 6.875, "income": 76080.48, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2026-05", "milestone": "Started"}, {"state": "WI", "price": 350000, "loan": 280000, "credit": 803, "rate": 6.49, "income": 78000, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2026-06", "milestone": "Ready for Pack Out"}, {"state": "MI", "price": 280000, "loan": 224000, "credit": 767, "rate": 6.875, "income": 99999.96, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2026-06", "milestone": "Ready for Pack Out"}, {"state": "FL", "price": 285000, "loan": 279837, "credit": 727, "rate": 6.25, "income": 127543.8, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2026-05", "milestone": "Docs Signing"}, {"state": "MA", "price": 450000, "loan": 360000, "credit": 798, "rate": 6.625, "income": 101025.6, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2026-04", "milestone": "Funding"}, {"state": "TX", "price": 189000, "loan": 183330, "credit": 709, "rate": 6.875, "income": 58635.24, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2026-04", "milestone": "Funding"}, {"state": "VA", "price": 1100000, "loan": 880000, "credit": 795, "rate": 6.375, "income": 339970.92, "type": "Conventional", "purpose": "Purchase", "coborr": 1, "date": "2026-04", "milestone": "Funding"}, {"state": "NC", "price": 286272, "loan": 229018, "credit": 777, "rate": 6.49, "income": 116535.6, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2026-04", "milestone": "Funding"}, {"state": "NV", "price": 259000, "loan": 254308, "credit": 648, "rate": 6.75, "income": 113837.52, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2026-03", "milestone": "Funding"}, {"state": "PA", "price": 360000, "loan": 342000, "credit": 742, "rate": 6.99, "income": 144999.96, "type": "Conventional", "purpose": "Purchase", "coborr": 1, "date": "2026-03", "milestone": "Funding"}, {"state": "NM", "price": 310000, "loan": 304385, "credit": 727, "rate": 6.25, "income": 83090.4, "type": "FHA", "purpose": "Purchase", "coborr": 0, "date": "2026-03", "milestone": "Funding"}, {"state": "MN", "price": 360000, "loan": 288000, "credit": 797, "rate": 6.49, "income": 87000, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2026-03", "milestone": "Funding"}, {"state": "IL", "price": 449900, "loan": 419108, "credit": 688, "rate": 6.75, "income": 151445.16, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2026-03", "milestone": "Funding"}, {"state": "CA", "price": 508500, "loan": 499289, "credit": 648, "rate": 5.5, "income": 95991.96, "type": "FHA", "purpose": "Purchase", "coborr": 0, "date": "2026-02", "milestone": "Funding"}, {"state": "IN", "price": 256000, "loan": 251363, "credit": 743, "rate": 6.625, "income": 51800.04, "type": "FHA", "purpose": "Purchase", "coborr": 0, "date": "2026-02", "milestone": "Funding"}, {"state": "OH", "price": 230000, "loan": 200000, "credit": 705, "rate": 6.125, "income": 50000.04, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2026-02", "milestone": "Funding"}, {"state": "CA", "price": 400000, "loan": 290000, "credit": 779, "rate": 5.875, "income": 83417.04, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2026-02", "milestone": "Funding"}, {"state": "KY", "price": 495000, "loan": 486034, "credit": 674, "rate": 5.99, "income": 208077.96, "type": "FHA", "purpose": "Purchase", "coborr": 0, "date": "2026-01", "milestone": "Funding"}, {"state": "TX", "price": 300000, "loan": 270000, "credit": 817, "rate": 5.875, "income": 70737.84, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-12", "milestone": "Funding"}, {"state": "MD", "price": 400000, "loan": 325600, "credit": 562, "rate": 6.75, "income": 102315.24, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2025-12", "milestone": "Funding"}, {"state": "MI", "price": 170000, "loan": 161500, "credit": 684, "rate": 5.99, "income": 89167.2, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-11", "milestone": "Funding"}, {"state": "WI", "price": 136000, "loan": 131920, "credit": 692, "rate": 6.5, "income": 49231.92, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-11", "milestone": "Funding"}, {"state": "MA", "price": 0, "loan": 493000, "credit": 765, "rate": 6.125, "income": 141600, "type": "Conventional", "purpose": "No Cash-Out Refi", "coborr": 1, "date": "2025-10", "milestone": "Funding"}, {"state": "TX", "price": 349900, "loan": 314910, "credit": 800, "rate": 7.875, "income": 310000.08, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-10", "milestone": "Funding"}, {"state": "MI", "price": 162500, "loan": 157625, "credit": 692, "rate": 6, "income": 40839, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-10", "milestone": "Funding"}, {"state": "TX", "price": 315000, "loan": 309294, "credit": 698, "rate": 6.25, "income": 165939.72, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2025-10", "milestone": "Funding"}, {"state": "MD", "price": 390000, "loan": 382936, "credit": 748, "rate": 5.99, "income": 97750.08, "type": "FHA", "purpose": "Purchase", "coborr": 0, "date": "2025-10", "milestone": "Funding"}, {"state": "NH", "price": 574900, "loan": 546155, "credit": 782, "rate": 6.49, "income": 141392.16, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-09", "milestone": "Funding"}, {"state": "TX", "price": 282500, "loan": 274025, "credit": 769, "rate": 5.99, "income": 90860.88, "type": "Conventional", "purpose": "Purchase", "coborr": 1, "date": "2025-09", "milestone": "Funding"}, {"state": "TN", "price": 498000, "loan": 473100, "credit": 791, "rate": 6.49, "income": 120000, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-09", "milestone": "Funding"}, {"state": "IN", "price": 144000, "loan": 139680, "credit": 757, "rate": 6.49, "income": 41847, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-09", "milestone": "Funding"}, {"state": "TX", "price": 315000, "loan": 305550, "credit": 797, "rate": 6.49, "income": 97344, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-08", "milestone": "Funding"}, {"state": "KS", "price": 267000, "loan": 262163, "credit": 725, "rate": 6.25, "income": 112819.2, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2025-08", "milestone": "Funding"}, {"state": "FL", "price": 360000, "loan": 288000, "credit": 745, "rate": 6.49, "income": 98000.16, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-08", "milestone": "Funding"}, {"state": "MI", "price": 365000, "loan": 358388, "credit": 671, "rate": 6.25, "income": 104000.04, "type": "FHA", "purpose": "Purchase", "coborr": 0, "date": "2025-08", "milestone": "Funding"}, {"state": "NC", "price": 304990, "loan": 243992, "credit": 755, "rate": 6.625, "income": 79040.04, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-07", "milestone": "Funding"}, {"state": "GA", "price": 234000, "loan": 229761, "credit": 600, "rate": 7.25, "income": 75965.16, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2025-07", "milestone": "Funding"}, {"state": "NC", "price": 278000, "loan": 272964, "credit": 631, "rate": 6.75, "income": 119790.84, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2025-07", "milestone": "Funding"}, {"state": "OH", "price": 0, "loan": 188000, "credit": 636, "rate": 8.49, "income": 79999.92, "type": "Conventional", "purpose": "Cash-Out Refi", "coborr": 0, "date": "2025-06", "milestone": "Funding"}, {"state": "PA", "price": 187000, "loan": 183612, "credit": 650, "rate": 6.75, "income": 67478.64, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2025-06", "milestone": "Funding"}, {"state": "NC", "price": 339000, "loan": 293920, "credit": 802, "rate": 6.99, "income": 84900, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-06", "milestone": "Funding"}, {"state": "TN", "price": 385000, "loan": 378026, "credit": 718, "rate": 6.75, "income": 109729.56, "type": "FHA", "purpose": "Purchase", "coborr": 0, "date": "2025-06", "milestone": "Funding"}, {"state": "PA", "price": 299000, "loan": 293584, "credit": 637, "rate": 6.375, "income": 81495.72, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2025-06", "milestone": "Funding"}, {"state": "AL", "price": 127500, "loan": 95612, "credit": 808, "rate": 7.5, "income": 88853.64, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-05", "milestone": "Funding"}, {"state": "NC", "price": 340000, "loan": 323000, "credit": 718, "rate": 7.625, "income": 176553.96, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-05", "milestone": "Funding"}, {"state": "NC", "price": 181000, "loan": 184891, "credit": 787, "rate": 6.75, "income": 42186.84, "type": "VA", "purpose": "Purchase", "coborr": 0, "date": "2025-05", "milestone": "Funding"}, {"state": "NC", "price": 360000, "loan": 349200, "credit": 770, "rate": 6.625, "income": 95661.36, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-04", "milestone": "Funding"}, {"state": "CO", "price": 415000, "loan": 423922, "credit": 779, "rate": 6.75, "income": 158053.2, "type": "VA", "purpose": "Purchase", "coborr": 1, "date": "2025-04", "milestone": "Funding"}, {"state": "SC", "price": 290000, "loan": 275500, "credit": 701, "rate": 6.625, "income": 68000.04, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-04", "milestone": "Funding"}, {"state": "VA", "price": 127500, "loan": 121125, "credit": 662, "rate": 7.625, "income": 234999.96, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-04", "milestone": "Funding"}, {"state": "OK", "price": 140000, "loan": 137464, "credit": 607, "rate": 7.125, "income": 97849.32, "type": "FHA", "purpose": "Purchase", "coborr": 0, "date": "2025-04", "milestone": "Funding"}, {"state": "WI", "price": 660000, "loan": 360000, "credit": 819, "rate": 6.125, "income": 129048, "type": "VA", "purpose": "Purchase", "coborr": 0, "date": "2025-03", "milestone": "Funding"}, {"state": "OH", "price": 340000, "loan": 324022, "credit": 598, "rate": 7.25, "income": 120943.44, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2025-03", "milestone": "Funding"}, {"state": "GA", "price": 265000, "loan": 260200, "credit": 669, "rate": 5.875, "income": 78971.4, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2025-02", "milestone": "Funding"}, {"state": "TX", "price": 500000, "loan": 485000, "credit": 711, "rate": 7.125, "income": 149712.6, "type": "Conventional", "purpose": "Purchase", "coborr": 1, "date": "2025-02", "milestone": "Funding"}, {"state": "TX", "price": 400000, "loan": 360000, "credit": 790, "rate": 7.125, "income": 177450, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-02", "milestone": "Funding"}, {"state": "GA", "price": 375000, "loan": 337500, "credit": 675, "rate": 6.625, "income": 83145.72, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-02", "milestone": "Funding"}, {"state": "OH", "price": 155000, "loan": 147250, "credit": 756, "rate": 6.875, "income": 37500.48, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2025-02", "milestone": "Funding"}, {"state": "SC", "price": 250000, "loan": 245471, "credit": 639, "rate": 7.25, "income": 114155.28, "type": "FHA", "purpose": "Purchase", "coborr": 1, "date": "2025-02", "milestone": "Funding"}, {"state": "CO", "price": 475000, "loan": 227700, "credit": 790, "rate": 6.875, "income": 164328.24, "type": "Conventional", "purpose": "Purchase", "coborr": 1, "date": "2025-01", "milestone": "Funding"}, {"state": "PA", "price": 198000, "loan": 194413, "credit": 617, "rate": 7.25, "income": 85350, "type": "FHA", "purpose": "Purchase", "coborr": 0, "date": "2025-01", "milestone": "Funding"}, {"state": "GA", "price": 420000, "loan": 370000, "credit": 804, "rate": 7.25, "income": 105600, "type": "Conventional", "purpose": "Purchase", "coborr": 0, "date": "2024-12", "milestone": "Funding"}];
+const purchases = DATA.filter(d=>d.purpose==='Purchase' && d.price);
+const fmtK = n => '$'+Math.round(n/1000)+'k';
+const fmt$ = n => '$'+Math.round(n).toLocaleString();
+const median = arr => {const a=arr.filter(x=>x||x===0).sort((x,y)=>x-y);const m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2;};
+const N = DATA.length;
+
+// palette
+const C = {ink:'#01413e', inkSoft:'#4e6e6c', fern:'#447247', fernDeep:'#2f5331', fernSoft:'#dfe9df', plum:'#7a306c', hot:'#cc451c', paper3:'#cfcdc8'};
+
+// ---- KPIs ----
+const vol = DATA.reduce((s,d)=>s+(d.loan||0),0);
+document.getElementById('kp-n').textContent = N;
+document.getElementById('kp-vol').textContent = '$'+(vol/1e6).toFixed(1)+'M';
+document.getElementById('f-n').textContent = N;
+
+const kpiData = [
+  {v: '$312<span class="unit">k</span>', l:'Median purchase price', d:'affordable markets'},
+  {v: median(DATA.map(d=>d.credit)), l:'Median credit score', d:'prime, but a wide range'},
+  {v: '$98<span class="unit">k</span>', l:'Median annual income', d:'upper-middle'},
+  {v: '3.8<span class="unit">%</span>', l:'Median down payment', d:'low-down dominant'},
+  {v: median(DATA.map(d=>d.rate)).toFixed(2)+'<span class="unit">%</span>', l:'Median note rate', d:'buying in a high-rate market'},
+  {v: Math.round(100*DATA.filter(d=>d.coborr===0).length/N)+'<span class="unit">%</span>', l:'Solo buyers (one income)', d:'doing it alone'},
+];
+document.getElementById('kpis').innerHTML = kpiData.map(k=>
+  `<div class="kpi"><div class="v">${k.v}</div><div class="l">${k.l}</div><div class="d">${k.d}</div></div>`).join('');
+
+// ---- insight numbers ----
+const dpPct = purchases.map(d=>100*(d.price-d.loan)/d.price);
+document.getElementById('i-dp').textContent = Math.round(100*dpPct.filter(x=>x<=3.6).length/dpPct.length)+'%';
+document.getElementById('i-solo').textContent = Math.round(100*DATA.filter(d=>d.coborr===0).length/N)+'%';
+document.getElementById('i-strong').textContent = Math.round(100*DATA.filter(d=>d.credit>=740).length/N)+'%';
+
+// ---- PERSONAS ----
+function segStats(filter){
+  const s = DATA.filter(filter);
+  return {n:s.length, share:Math.round(100*s.length/N), credit:median(s.map(d=>d.credit)),
+    income:median(s.map(d=>d.income)), price:median(s.map(d=>d.price).filter(Boolean)),
+    rate:median(s.map(d=>d.rate)).toFixed(2), solo:Math.round(100*s.filter(d=>d.coborr===0).length/s.length)};
+}
+const conv = segStats(d=>d.type==='Conventional');
+const fha  = segStats(d=>d.type==='FHA');
+const va   = segStats(d=>d.type==='VA');
+const personas = [
+  {cls:'p1', idx:'01', tag:'~60% · Conventional', name:'The Credit-Ready Striver', s:conv,
+   blurb:'Strong credit, real income, limited cash. They qualify easily — their real question is "what\\'s the smallest amount I can put down without wrecking my payment?" They\\'re weighing 3% conventional vs. 5% vs. waiting.',
+   topics:['3% down conventional vs. FHA — which is actually cheaper','How to get rid of PMI as fast as possible','Buy at 7% and refinance later: does the math work?','First-time buyer mistakes when you have good credit']},
+  {cls:'p2', idx:'02', tag:'~35% · FHA', name:'The Bounce-Back Buyer', s:fha,
+   blurb:'Good income, bruised credit (median 660, some in the 500s–600s). They thought they couldn\\'t buy. FHA is their door in — they need <em>permission and a plan</em> more than product specs.',
+   topics:['Buy a house with a 580 credit score (it\\'s real)','FHA 3.5% down — full walkthrough','Raise your score 40 points before you apply','How much house can I afford on one income?']},
+  {cls:'p3', idx:'03', tag:'~5% · VA', name:'The Veteran Buyer', s:va,
+   blurb:'Veterans using their benefit — top-tier credit (median ~790), buying at higher price points with <em>$0 down</em>. Small in count but high-value and underserved on most channels.',
+   topics:['VA loan: $0 down, no PMI — full breakdown','VA loan myths that cost veterans money','Using your VA benefit a second time','VA vs. conventional with great credit']},
+];
+document.getElementById('personas').innerHTML = personas.map(p=>`
+  <div class="persona ${p.cls}">
+    <div class="idx">${p.idx}</div>
+    <div class="tag">${p.tag}</div>
+    <h3>${p.name}</h3>
+    <div class="share">${p.s.n} loans · ${p.s.share}% of your funded audience</div>
+    <dl>
+      <dt>Median credit</dt><dd>${p.s.credit}</dd>
+      <dt>Median income</dt><dd>${fmt$(p.s.income)}</dd>
+      <dt>Median price</dt><dd>${fmt$(p.s.price)}</dd>
+      <dt>Median rate</dt><dd>${p.s.rate}%</dd>
+      <dt>Solo buyers</dt><dd>${p.s.solo}%</dd>
+    </dl>
+    <p class="blurb">${p.blurb}</p>
+    <div class="topics"><b>Video angles</b><ul>${p.topics.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+  </div>`).join('');
+
+// ---- CHARTS ----
+Chart.defaults.font.family = "'Figtree', sans-serif";
+Chart.defaults.font.weight = 500;
+Chart.defaults.color = C.inkSoft;
+Chart.defaults.plugins.legend.display = false;
+const grid = {grid:{color:'rgba(0,0,0,0)',borderDash:[3,3]},border:{display:false}};
+const dotGrid = {grid:{color:C.paper3,lineWidth:1,drawTicks:false},border:{display:false}};
+const noGrid = {grid:{display:false},border:{display:false}};
+const tip = {backgroundColor:C.ink,padding:10,cornerRadius:8,titleFont:{family:'Figtree'},bodyFont:{family:'Figtree',weight:600}};
+
+// Loan type doughnut
+const typeC = {Conventional:0,FHA:0,VA:0};
+DATA.forEach(d=>typeC[d.type]!==undefined&&typeC[d.type]++);
+new Chart(cType,{type:'doughnut',data:{labels:Object.keys(typeC),datasets:[{data:Object.values(typeC),backgroundColor:[C.fern,C.plum,C.hot],borderColor:'#fff',borderWidth:3}]},
+  options:{cutout:'60%',plugins:{legend:{display:true,position:'right',labels:{boxWidth:12,font:{size:13,weight:600}}},tooltip:{...tip,callbacks:{label:c=>` ${c.label}: ${c.raw} (${Math.round(100*c.raw/N)}%)`}}}}});
+
+// Credit bands
+const cbLabels=['<580','580–619','620–659','660–699','700–739','740–779','780+'];
+const cbEdges=[580,620,660,700,740,780,9999];
+const cbCounts=cbLabels.map(()=>0);
+DATA.forEach(d=>{for(let i=0;i<cbEdges.length;i++){if(d.credit<cbEdges[i]){cbCounts[i]++;break;}}});
+new Chart(cCredit,{type:'bar',data:{labels:cbLabels,datasets:[{data:cbCounts,backgroundColor:cbLabels.map((_,i)=>i<3?C.plum:C.fern),borderRadius:6}]},
+  options:{scales:{x:noGrid,y:{...dotGrid,ticks:{precision:0}}},plugins:{tooltip:{...tip,callbacks:{label:c=>` ${c.raw} buyers`}}}}});
+
+// Down payment bands
+const dpLabels=['≤3%','3.5–5%','5–10%','10–20%','20%+'];
+const dpC=dpLabels.map(()=>0);
+dpPct.forEach(d=>{if(d<=3.6)dpC[0]++;else if(d<5)dpC[1]++;else if(d<10)dpC[2]++;else if(d<20)dpC[3]++;else dpC[4]++;});
+new Chart(cDown,{type:'bar',data:{labels:dpLabels,datasets:[{data:dpC,backgroundColor:dpLabels.map((_,i)=>i<=1?C.fern:C.hot),borderRadius:6}]},
+  options:{scales:{x:noGrid,y:{...dotGrid,ticks:{precision:0}}},plugins:{tooltip:{...tip,callbacks:{label:c=>` ${c.raw} buyers`}}}}});
+
+// Income bands
+const inLabels=['<$50k','$50–75k','$75–100k','$100–150k','$150k+'];
+const inEdges=[50000,75000,100000,150000,1e12];
+const inC=inLabels.map(()=>0);
+DATA.forEach(d=>{for(let i=0;i<inEdges.length;i++){if(d.income<inEdges[i]){inC[i]++;break;}}});
+new Chart(cIncome,{type:'bar',data:{labels:inLabels,datasets:[{data:inC,backgroundColor:C.fern,borderRadius:6}]},
+  options:{scales:{x:noGrid,y:{...dotGrid,ticks:{precision:0}}},plugins:{tooltip:{...tip,callbacks:{label:c=>` ${c.raw} buyers`}}}}});
+
+// Price bands
+const prLabels=['<$200k','$200–300k','$300–400k','$400–500k','$500k+'];
+const prEdges=[200000,300000,400000,500000,1e12];
+const prC=prLabels.map(()=>0);
+DATA.forEach(d=>{if(!d.price)return;for(let i=0;i<prEdges.length;i++){if(d.price<prEdges[i]){prC[i]++;break;}}});
+new Chart(cPrice,{type:'bar',data:{labels:prLabels,datasets:[{data:prC,backgroundColor:C.plum,borderRadius:6}]},
+  options:{scales:{x:noGrid,y:{...dotGrid,ticks:{precision:0}}},plugins:{tooltip:{...tip,callbacks:{label:c=>` ${c.raw} buyers`}}}}});
+
+// States top 10
+const stC={};DATA.forEach(d=>stC[d.state]=(stC[d.state]||0)+1);
+const stSorted=Object.entries(stC).sort((a,b)=>b[1]-a[1]).slice(0,10);
+new Chart(cState,{type:'bar',data:{labels:stSorted.map(s=>s[0]),datasets:[{data:stSorted.map(s=>s[1]),backgroundColor:C.fern,borderRadius:6}]},
+  options:{indexAxis:'y',scales:{y:noGrid,x:{...dotGrid,ticks:{precision:0}}},plugins:{tooltip:{...tip,callbacks:{label:c=>` ${c.raw} buyers`}}}}});
+
+// Scatter
+const colorByType={Conventional:C.fern,FHA:C.plum,VA:C.hot};
+const dsScatter=['Conventional','FHA','VA'].map(t=>({label:t,
+  data:DATA.filter(d=>d.type===t&&d.price).map(d=>({x:d.credit,y:d.price})),
+  backgroundColor:colorByType[t],pointRadius:5,pointHoverRadius:7}));
+new Chart(cScatter,{type:'scatter',data:{datasets:dsScatter},
+  options:{plugins:{legend:{display:true,position:'top',labels:{boxWidth:10,usePointStyle:true,font:{weight:600}}},
+    tooltip:{...tip,callbacks:{label:c=>` ${c.dataset.label}: ${c.raw.x} credit, ${fmtK(c.raw.y)}`}}},
+    scales:{x:{...dotGrid,title:{display:true,text:'Credit score',color:C.inkSoft}},y:{...dotGrid,title:{display:true,text:'Purchase price',color:C.inkSoft},ticks:{callback:v=>fmtK(v)}}}}});
+
+// Rate histogram
+const rLabels=['5.5–6.0','6.0–6.5','6.5–7.0','7.0–7.5','7.5–8.0','8.0–8.5'];
+const rC=rLabels.map(()=>0);
+DATA.forEach(d=>{const r=d.rate;if(r<6)rC[0]++;else if(r<6.5)rC[1]++;else if(r<7)rC[2]++;else if(r<7.5)rC[3]++;else if(r<8)rC[4]++;else rC[5]++;});
+new Chart(cRate,{type:'bar',data:{labels:rLabels,datasets:[{data:rC,backgroundColor:rLabels.map((_,i)=>i<=2?C.fern:C.hot),borderRadius:6}]},
+  options:{scales:{x:noGrid,y:{...dotGrid,ticks:{precision:0}}},plugins:{tooltip:{...tip,callbacks:{label:c=>` ${c.raw} buyers locked here`}}}}});
+</script>
+</body>
+</html>
