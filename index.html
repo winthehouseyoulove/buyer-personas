@@ -43,9 +43,6 @@
   .hero h1 em{color:#86c08e;text-decoration:underline;text-decoration-color:rgba(134,192,142,.4);text-underline-offset:.1em}
   .hero .rule{width:96px;height:4px;background:var(--accent);border-radius:2px;margin:30px 0 26px}
   .hero .sub{font-size:20px;font-weight:400;color:var(--paper);opacity:.82;max-width:62ch;line-height:1.34}
-  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
-  .pill{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:60px;padding:8px 16px;font-size:13px;color:var(--paper);opacity:.9;font-weight:500}
-  .pill b{font-weight:800;color:#fff;opacity:1}
 
   /* ===== SECTION HEADS ===== */
   section{margin-top:62px}
@@ -148,12 +145,6 @@
       <h1>Who is actually buying — and <em>what to make videos about</em></h1>
       <div class="rule"></div>
       <p class="sub">Every borrower here came from the YouTube channel and was referred to a partner loan officer. This is your audience after they stop watching and start buying. The patterns tell you who to make videos <em>for</em>.</p>
-      <div class="meta-row">
-        <span class="pill"><b id="kp-n"></b> funded / active loans</span>
-        <span class="pill"><b id="kp-vol"></b> total volume</span>
-        <span class="pill">Window <b>Dec 2024 – Jun 2026</b></span>
-        <span class="pill"><b>100%</b> WTHYL influencer leads</span>
-      </div>
     </div>
   </div>
 
@@ -226,9 +217,6 @@ const N = DATA.length;
 const C = {ink:'#01413e', inkSoft:'#4e6e6c', fern:'#447247', fernDeep:'#2f5331', fernSoft:'#dfe9df', plum:'#7a306c', hot:'#cc451c', paper3:'#cfcdc8'};
 
 // ---- KPIs ----
-const vol = DATA.reduce((s,d)=>s+(d.loan||0),0);
-document.getElementById('kp-n').textContent = N;
-document.getElementById('kp-vol').textContent = '$'+(vol/1e6).toFixed(1)+'M';
 document.getElementById('f-n').textContent = N;
 
 const kpiData = [
