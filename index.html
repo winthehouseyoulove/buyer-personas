@@ -135,6 +135,16 @@
   .vid-note{margin-top:18px;font-size:13px;color:var(--ink-soft);font-weight:500;line-height:1.5;background:var(--paper-2);border-radius:14px;padding:16px 20px}
   .vid-note b{color:var(--ink);font-weight:800}
 
+  /* ===== RAW DATA TABLE ===== */
+  .table-scroll{max-height:580px;overflow:auto;border-radius:18px}
+  .rawtbl{width:100%;border-collapse:collapse;font-size:13px}
+  .rawtbl thead th{position:sticky;top:0;z-index:1;background:var(--ink);color:var(--paper);font-weight:800;text-align:right;padding:12px 14px;white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+  .rawtbl thead th:first-child,.rawtbl tbody td:first-child,.rawtbl thead th.l,.rawtbl tbody td.l{text-align:left}
+  .rawtbl tbody td{padding:10px 14px;text-align:right;border-top:1px solid var(--line);white-space:nowrap;font-weight:600;color:var(--ink)}
+  .rawtbl tbody td.l{font-weight:500;color:var(--ink-soft)}
+  .rawtbl tbody tr:nth-child(even){background:var(--paper)}
+  .rawtbl tbody tr:hover{background:var(--accent-soft)}
+
   footer{margin-top:70px;padding-top:26px;border-top:2px dotted var(--paper-3);font-size:13px;color:var(--ink-soft);font-weight:500;line-height:1.5}
 </style>
 </head>
@@ -177,7 +187,7 @@
         <div class="card"><h3>Down payment at close</h3><div class="cap">Half put down 3% or less — low-down content wins</div><div class="chart-box"><canvas id="cDown"></canvas></div></div>
         <div class="card"><h3>Annual income</h3><div class="cap">Middle / upper-middle — not wealthy, not broke</div><div class="chart-box"><canvas id="cIncome"></canvas></div></div>
         <div class="card"><h3>Purchase price</h3><div class="cap">Affordable-market buyers — median ~$312k</div><div class="chart-box"><canvas id="cPrice"></canvas></div></div>
-        <div class="card"><h3>Where they're buying</h3><div class="cap">Affordable South + Midwest lead. TX & NC are #1 and #2</div><div class="chart-box"><canvas id="cState"></canvas></div></div>
+        <div class="card"><h3>Where they're buying</h3><div class="cap">Ranked by buyer count — hover any state for its median purchase price</div><div class="chart-box"><canvas id="cState"></canvas></div></div>
         <div class="card"><h3>Credit vs. price, by loan type</h3><div class="cap">FHA clusters at lower credit; conventional spans the top</div><div class="chart-box tall"><canvas id="cScatter"></canvas></div></div>
         <div class="card"><h3>Note rate locked</h3><div class="cap">Most closed at 6–7%. Your audience buys despite high rates</div><div class="chart-box tall"><canvas id="cRate"></canvas></div></div>
       </div>
@@ -197,6 +207,14 @@
           <div class="insight c-plum"><div class="kind">Positioning</div><h4>You're a national, affordable-market channel</h4><p>Buyers span <em>25 states</em>, led by <b>TX & NC</b>, median price <b>$312k</b> — well below coastal prices. Don't make California-priced content; show $250k–$400k homes.</p></div>
           <div class="insight"><div class="kind">Don't forget</div><h4>A high-credit majority is under-served</h4><p><span class="num" id="i-strong"></span> of buyers have <em>740+ credit</em>. They don't need credit-repair videos — they need "lowest down payment with great credit," PMI removal, and buy-vs-rent math.</p></div>
         </div>
+      </div>
+    </section>
+
+    <!-- RAW DATA -->
+    <section>
+      <div class="sec-head"><span class="kicker"></span><h2>The raw data</h2><p>Every de-identified loan record behind this dashboard — <span id="rd-n"></span> rows, newest first. Scroll within the table.</p></div>
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="table-scroll"><table class="rawtbl" id="rawtbl"></table></div>
       </div>
     </section>
 
@@ -367,11 +385,13 @@ DATA.forEach(d=>{if(!d.price)return;for(let i=0;i<prEdges.length;i++){if(d.price
 new Chart(cPrice,{type:'bar',data:{labels:prLabels,datasets:[{data:prC,backgroundColor:C.plum,borderRadius:6}]},
   options:{scales:{x:noGrid,y:{...dotGrid,ticks:{precision:0}}},plugins:{tooltip:{...tip,callbacks:{label:c=>` ${c.raw} buyers`}}}}});
 
-// States top 10
-const stC={};DATA.forEach(d=>stC[d.state]=(stC[d.state]||0)+1);
+// States top 10 — buyer count, with median purchase price per state in the tooltip
+const stC={}, stPrices={};
+DATA.forEach(d=>{stC[d.state]=(stC[d.state]||0)+1; if(d.price)(stPrices[d.state]=stPrices[d.state]||[]).push(d.price);});
+const stMedPrice={};Object.keys(stPrices).forEach(s=>stMedPrice[s]=median(stPrices[s]));
 const stSorted=Object.entries(stC).sort((a,b)=>b[1]-a[1]).slice(0,10);
 new Chart(cState,{type:'bar',data:{labels:stSorted.map(s=>s[0]),datasets:[{data:stSorted.map(s=>s[1]),backgroundColor:C.fern,borderRadius:6}]},
-  options:{indexAxis:'y',scales:{y:noGrid,x:{...dotGrid,ticks:{precision:0}}},plugins:{tooltip:{...tip,callbacks:{label:c=>` ${c.raw} buyers`}}}}});
+  options:{indexAxis:'y',scales:{y:noGrid,x:{...dotGrid,ticks:{precision:0}}},plugins:{tooltip:{...tip,callbacks:{label:c=>` ${c.raw} buyers`,afterLabel:c=>stMedPrice[c.label]?` Median price: ${fmt$(stMedPrice[c.label])}`:''}}}}});
 
 // Scatter
 const colorByType={Conventional:C.fern,FHA:C.plum,VA:C.hot};
@@ -389,6 +409,26 @@ const rC=rLabels.map(()=>0);
 DATA.forEach(d=>{const r=d.rate;if(r<6)rC[0]++;else if(r<6.5)rC[1]++;else if(r<7)rC[2]++;else if(r<7.5)rC[3]++;else if(r<8)rC[4]++;else rC[5]++;});
 new Chart(cRate,{type:'bar',data:{labels:rLabels,datasets:[{data:rC,backgroundColor:rLabels.map((_,i)=>i<=2?C.fern:C.hot),borderRadius:6}]},
   options:{scales:{x:noGrid,y:{...dotGrid,ticks:{precision:0}}},plugins:{tooltip:{...tip,callbacks:{label:c=>` ${c.raw} buyers locked here`}}}}});
+
+// ---- RAW DATA TABLE ----
+const rdCols=[
+  {k:'date',l:'Date',left:true},
+  {k:'state',l:'State',left:true},
+  {k:'type',l:'Loan type',left:true},
+  {k:'purpose',l:'Purpose',left:true},
+  {k:'price',l:'Price',f:v=>v?fmt$(v):'—'},
+  {k:'loan',l:'Loan amt',f:v=>fmt$(v)},
+  {k:'credit',l:'Credit'},
+  {k:'rate',l:'Rate',f:v=>v+'%'},
+  {k:'income',l:'Income',f:v=>fmt$(v)},
+  {k:'coborr',l:'Co-borrower',f:v=>v?'Yes':'No'},
+  {k:'milestone',l:'Milestone',left:true},
+];
+const rdRows=[...DATA].sort((a,b)=>b.date.localeCompare(a.date));
+document.getElementById('rd-n').textContent=DATA.length;
+document.getElementById('rawtbl').innerHTML=
+  '<thead><tr>'+rdCols.map(c=>`<th class="${c.left?'l':''}">${c.l}</th>`).join('')+'</tr></thead>'+
+  '<tbody>'+rdRows.map(r=>'<tr>'+rdCols.map(c=>`<td class="${c.left?'l':''}">${c.f?c.f(r[c.k]):r[c.k]}</td>`).join('')+'</tr>').join('')+'</tbody>';
 </script>
 </body>
 </html>
